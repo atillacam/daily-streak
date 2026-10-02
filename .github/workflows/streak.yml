@@ -1,0 +1,39 @@
+name: Daily Streak Keeper
+
+on:
+  schedule:
+    # Runs at 08:00 UTC (11:00 TRT) and 18:00 UTC (21:00 TRT) every day
+    - cron: '0 8 * * *'
+    - cron: '0 18 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab anytime
+
+permissions:
+  contents: write
+
+jobs:
+  update-streak:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Streak Script
+        run: python streak.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.name "atillacam"
+          git config --local user.email "candan58@outlook.com"
+          git add -A
+          # Only commit if there are changes
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore(streak): keep git green [skip ci]"
+            git push origin main
+          else
+            echo "No changes to commit."
+          fi
