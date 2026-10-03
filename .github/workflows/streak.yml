@@ -16,6 +16,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -33,7 +36,7 @@ jobs:
           # Only commit if there are changes
           if ! git diff-index --quiet HEAD; then
             git commit -m "chore(streak): keep git green [skip ci]"
-            git push origin main
+            git push origin HEAD:main
           else
             echo "No changes to commit."
           fi
